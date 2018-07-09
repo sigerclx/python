@@ -1,0 +1,7 @@
+pyinstaller -F -c --icon=car.ico --hiddenimport win32timezone PCInfoService.py
+
+生成04_windowsService.exe 后，
+
+可用04_windowsService install 安装服务
+
+用sc delete 

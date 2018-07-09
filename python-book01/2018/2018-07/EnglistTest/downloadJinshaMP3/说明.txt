@@ -1,0 +1,14 @@
+downMp3-金山下载.py：
+
+利用手输入的eng.csv从金山api里下载单词，放入dict目录
+
+不足的单词可以从扇贝补足或者从谷歌翻译下载ttsMP3
+
+金山API的账号和key申请见云笔记。
+
+
+creatWordlist.py 是利用eng.csv生成EnglishALl.csv（带含义）
+
+download.py 是下载模块
+
+searchwordApi.py 是金山API模块

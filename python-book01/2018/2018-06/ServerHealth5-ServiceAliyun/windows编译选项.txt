@@ -1,0 +1,13 @@
+﻿pyinstaller -F -c --icon=hudie.ico --hiddenimport win32timezone status.py
+
+pip install pyinstaller
+
+pip install aliyun-python-sdk-core-v3
+
+pip install aliyun-python-sdk-ecs
+
+pip install pypiwin32
+
+pip install requests
+
+pip install psutil

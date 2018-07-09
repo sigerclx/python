@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>金锁基金工具</title>
+    <link rel="stylesheet" href="b.css">
+    <style>
+        body{
+            background-color: #fbfbfb;
+        }
+        .red {
+            color: red;
+        }
+
+        .green {
+            color: #008000;
+        }
+
+        .mb50 {
+            margin-bottom: 50px;
+        }
+
+        #addForm {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 mb50">
+            <h1>金锁基金工具</h1>
+            <button type="button" class="btn btn-default" id="add">添加</button>
+            <button type="button" class="btn btn-warning" id="clean">全部清空</button>
+        </div>
+        <div class="col-xs-12 mb50" id="addForm">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="inputId" class="col-sm-2 control-label">基金代码</label>
+
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="inputId" placeholder="基金代码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputName" class="col-sm-2 control-label">基金名称</label>
+
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputName" placeholder="基金名称">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputCb" class="col-sm-2 control-label">成本</label>
+
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputCb" placeholder="成本">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputFe" class="col-sm-2 control-label">份额</label>
+
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputFe" placeholder="份额">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-success" id="btnAdd">确认</button>
+                        <button type="submit" class="btn btn-default" id="btnClose">取消</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-xs-12">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-condensed">
+                    <caption>基金数据展示</caption>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>日期</th>
+                        <th>基金</th>
+                        <th>单位净值</th>
+                        <th>日增长值</th>
+                        <th>日增长率</th>
+                        <th>成本</th>
+                        <th>市值</th>
+                        <th>收益</th>
+                        <th>收益率</th>
+                    </tr>
+                    </thead>
+                    <tbody id="jjDataWrap">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="jjData_tmpl">
+    <% for ( var i = 0; i < jjData.length; i++ ) { %>
+    <tr>
+        <th scope="row"><%=jjData[i].key%></th>
+        <td><%=jjData[i].day%></td>
+        <td><%=jjData[i].name%>  <%=jjData[i].id%></td>
+        <td class="text-right"><%=jjData[i].jz%></td>
+        <td class="text-right <%=(jjData[i].zzz >0? 'red' : 'green')%>"><%=jjData[i].zzz%></td>
+        <td class="text-right"><%=jjData[i].zzl%>%</td>
+        <td class="text-right"><%=jjData[i].cb%></td>
+        <td class="text-right"><%=jjData[i].sz%></td>
+        <td class="text-right <%=(jjData[i].sy >0? 'red' : 'green')%>"><%=jjData[i].sy%></td>
+        <td class="text-right"><%=jjData[i].syl%>%</td>
+    </tr>
+    <% } %>
+</script>
+<script type="text/html" id="jjCount_tmpl">
+    <tr>
+        <th scope="row"></th>
+        <td></td>
+        <td></td>
+        <td class="text-right">合计：</td>
+        <td class="text-right"><%=zzzCount%></td>
+        <td></td>
+        <td class="text-right"><%=cbCount%></td>
+        <td class="text-right"><%=szCount%></td>
+        <td class="text-right <%=(syCount >0? 'red' : 'green')%>"><%=syCount%></td>
+        <td class="text-right"><%=sylCount%>%</td>
+    </tr>
+</script>
+
+<script src="j.js"></script>
+<script src="tmpl.js"></script>
+<script>
+    $(document).ready(function () {
+        var storage = window.localStorage;
+//        存入本地数据
+//       storage.setItem('isLoad', '1');
+//       storage.setItem('a1', '270025,广发行业领先,3100,1405.80');
+
+        if (storage.length > 1) {
+            showData();
+        }
+        if (!storage.getItem('isLoad')) {
+            storage.clear();
+            storage.setItem('isLoad', '1');
+            console.log('clen')
+        }
+
+        // 各种点击事件
+        $('#add').on('click', function () {
+            $('#addForm').show();
+        });
+        $('#btnClose').on('click', function () {
+            $('#addForm').hide();
+            return false;
+        });
+        $('#btnAdd').on('click', function () {
+            var id = $('#inputId');
+            var name = $('#inputName');
+            var cb = $('#inputCb');
+            var fe = $('#inputFe');
+            id.val() === '' ? id.parents('.form-group').addClass('has-error') : id.parents('.form-group').removeClass('has-error');
+            name.val() === '' ? name.parents('.form-group').addClass('has-error') : name.parents('.form-group').removeClass('has-error');
+            cb.val() === '' ? cb.parents('.form-group').addClass('has-error') : cb.parents('.form-group').removeClass('has-error');
+            fe.val() === '' ? fe.parents('.form-group').addClass('has-error') : fe.parents('.form-group').removeClass('has-error');
+            if (id.val() && name.val() && cb.val() && fe.val()) {
+                storage.setItem(new Date().getTime(), id.val() + ',' + name.val() + ',' + cb.val() + ',' + fe.val());
+                id.val('');
+                name.val('');
+                cb.val('');
+                fe.val('');
+                showData();
+            }
+            return false;
+        });
+        $('#clean').on('click', function () {
+            storage.clear();
+            showData();
+        });
+
+        // 展示数据
+        function showData() {
+            var storage = window.localStorage;
+            var jjData = [];
+            var url = 'http://fund.eastmoney.com/Data/Fund_JJJZ_Data.aspx?t=1&lx=1&letter=&gsid=&text=&sort=zdf,desc&page=1,9999&dt=1421564326687&atfc=&onlySale=0';
+            $.getScript(url, function () {
+                var dbCache = db.datas;  // 所有净值数据
+                for (var j = 0; j < storage.length - 1; j++) {
+                    var oneData = storage.getItem(storage.key(j)).split(',');
+                    $.each(dbCache, function (i, n) {
+                        if ($.inArray(oneData[0], n) == 0) {
+                            var fe = oneData[3];  // 份额
+                            var cb = oneData[2];  // 成本
+                            var jz = n[3];  // 最新净值
+                            var zjz = n[5];  // 昨日净值
+                            var sz = (fe * jz).toFixed(2);  // 市值
+                            var sy = (sz - cb).toFixed(2);  // 收益
+                            var syl = (sy / cb * 100).toFixed(2);  // 收益率
+                            var zzz = (fe * jz - fe * zjz).toFixed(2);  // 日增长值
+                            var showday = db.showday[0];  // 净值时间
+                            var oneDataJson = {
+                                'key': j + 1,
+                                'id': oneData[0],
+                                'name': oneData[1],
+                                'jz': jz,
+                                'zzz': zzz,
+                                'zzl': n[8],
+                                'cb': cb,
+                                'sz': sz,
+                                'sy': sy,
+                                'syl': syl,
+                                'day': showday
+                            };  // 单挑JSON数据
+                            jjData.push(oneDataJson);  // 全部数据信息
+                            return;
+                        }
+                    });
+
+                }  // 数据全部得到
+
+                // 合计数据
+                var zzzCount = 0, cbCount = 0, szCount = 0, syCount = 0, sylCount = 0;
+                for (var i = 0; i < jjData.length; i++) {
+                    zzzCount += parseFloat(jjData[i].zzz);
+                    cbCount += parseFloat(jjData[i].cb);
+                    szCount += parseFloat(jjData[i].sz);
+                    syCount += parseFloat(jjData[i].sy);
+                }
+                var jjCount = {
+                    'zzzCount': zzzCount.toFixed(2),
+                    'cbCount': cbCount.toFixed(2),
+                    'szCount': szCount.toFixed(2),
+                    'syCount': syCount.toFixed(2),
+                    'sylCount': (syCount / cbCount * 100).toFixed(2)
+                };
+
+                // 渲染数据
+                var data = {'jjData': jjData};
+                var results = document.getElementById("jjDataWrap");
+                results.innerHTML = tmpl("jjData_tmpl", data);
+                results.innerHTML += tmpl("jjCount_tmpl", jjCount);
+
+            });
+        }
+
+    });
+
+</script>
+</body>
+</html>

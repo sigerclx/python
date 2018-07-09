@@ -1,0 +1,10 @@
+beidanci.py 是主英语测试程序
+
+listen_write.py 是听写模块
+
+tools.py 辅助函数
+
+EnglishALl.csv 词库(出题用)
+
+dict 是事先下载好的MP3美式发音
+
