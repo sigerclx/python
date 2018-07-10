@@ -1,0 +1,7 @@
+启动本web
+python manage.py runserver
+
+安装启用session功能
+python manage.py migrate
+
+python manage.py createsuperuser
