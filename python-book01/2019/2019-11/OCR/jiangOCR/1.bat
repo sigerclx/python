@@ -1,0 +1,1 @@
+tesseract "D:\Python\python-book01\2019\2019-11\jiangOCR\poem.jpeg" "D:\Python\python-book01\2019\2019-11\jiangOCR\one.txt" -l chi_sim
